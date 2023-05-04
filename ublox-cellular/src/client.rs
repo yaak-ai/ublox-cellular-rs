@@ -12,9 +12,10 @@ use crate::{
         *,
     },
     command::{
-        network_service::{
-            responses::OperatorSelection, types::OperatorSelectionMode, GetOperatorSelection,
-            SetOperatorSelection,
+        general::{GetCCID, GetFirmwareVersion, GetModelId},
+        gpio::{
+            types::{GpioInPull, GpioMode, GpioOutValue},
+            SetGpioConfiguration,
         },
         psn::{types::PSEventReportingMode, SetPacketSwitchedEventReporting},
     },
@@ -258,6 +259,38 @@ where
             },
             false,
         )?;
+
+        // Select SIM
+        self.network.send_internal(
+            &SetGpioConfiguration {
+                gpio_id: 25,
+                gpio_mode: GpioMode::Output(GpioOutValue::High),
+            },
+            false,
+        )?;
+
+        self.network.send_internal(
+            &SetGpioConfiguration {
+                gpio_id: 42,
+                gpio_mode: GpioMode::Input(GpioInPull::NoPull),
+            },
+            false,
+        )?;
+
+        self.network.send_internal(&GetModelId, false)?;
+
+        // self.network.send_internal(
+        //     &IdentificationInformation {
+        //         n: 9
+        //     },
+        //     false,
+        // )?;
+
+        self.network.send_internal(&GetFirmwareVersion, false)?;
+
+        self.select_sim_card()?;
+
+        self.network.send_internal(&GetCCID, false)?;
 
         // DCD circuit (109) changes in accordance with the carrier
         self.network.send_internal(
@@ -505,7 +538,7 @@ where
         // CREG URC
         self.network.send_internal(
             &SetNetworkRegistrationStatus {
-                n: NetworkRegistrationUrcConfig::UrcVerbose,
+                n: NetworkRegistrationUrcConfig::UrcDisabled,
             },
             true,
         )?;
@@ -513,7 +546,7 @@ where
         // CGREG URC
         self.network.send_internal(
             &SetGPRSNetworkRegistrationStatus {
-                n: GPRSNetworkRegistrationUrcConfig::UrcVerbose,
+                n: GPRSNetworkRegistrationUrcConfig::UrcDisabled,
             },
             true,
         )?;
@@ -521,7 +554,7 @@ where
         // CEREG URC
         self.network.send_internal(
             &SetEPSNetworkRegistrationStatus {
-                n: EPSNetworkRegistrationUrcConfig::UrcVerbose,
+                n: EPSNetworkRegistrationUrcConfig::UrcDisabled,
             },
             true,
         )?;

@@ -435,15 +435,15 @@ where
                 }) => {
                     info!("[URC] ExtendedPSNetworkRegistration {:?}", state);
                 }
-                Urc::GPRSNetworkRegistration(reg_params) => {
-                    new_reg_params.replace(reg_params.into());
-                }
-                Urc::EPSNetworkRegistration(reg_params) => {
-                    new_reg_params.replace(reg_params.into());
-                }
-                Urc::NetworkRegistration(reg_params) => {
-                    new_reg_params.replace(reg_params.into());
-                }
+                // Urc::GPRSNetworkRegistration(reg_params) => {
+                //     new_reg_params.replace(reg_params.into());
+                // }
+                // Urc::EPSNetworkRegistration(reg_params) => {
+                //     new_reg_params.replace(reg_params.into());
+                // }
+                // Urc::NetworkRegistration(reg_params) => {
+                //     new_reg_params.replace(reg_params.into());
+                // }
                 Urc::DataConnectionActivated(psn::urc::DataConnectionActivated {
                     result,
                     ip_addr: _,
