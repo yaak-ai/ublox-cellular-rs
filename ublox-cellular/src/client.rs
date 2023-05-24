@@ -467,24 +467,6 @@ where
 
         self.enable_registration_urcs()?;
 
-        // Set automatic operator selection, if not already set
-        let OperatorSelection { mode, .. } =
-            self.network.send_internal(&GetOperatorSelection, true)?;
-
-        // Only run AT+COPS=0 if currently de-registered, to avoid PLMN reselection
-        if !matches!(
-            mode,
-            OperatorSelectionMode::Automatic | OperatorSelectionMode::Manual
-        ) {
-            self.network.send_internal(
-                &SetOperatorSelection {
-                    mode: OperatorSelectionMode::Automatic,
-                    format: Some(2),
-                },
-                true,
-            )?;
-        }
-
         self.network.update_registration()?;
 
         self.network.reset_reg_time()?;

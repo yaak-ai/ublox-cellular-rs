@@ -309,64 +309,6 @@ where
 
         // If EPS has been sticky for longer than `timeout`
         let timeout: SecsDurationU32 = (self.status.registration_interventions * 15).secs();
-        if self.status.eps.sticky() && self.status.eps.duration(now) >= timeout {
-            // If (EPS + CSD) is not attempting registration
-            if self.status.eps.get_status() == registration::Status::NotRegistering
-                && self.status.csd.get_status() == registration::Status::NotRegistering
-            {
-                debug!(
-                    "Sticky not registering state for {}, PLMN reselection",
-                    self.status.eps.duration(now)
-                );
-
-                self.status.csd.reset();
-                self.status.psd.reset();
-                self.status.eps.reset();
-                self.status.registration_interventions += 1;
-
-                self.send_internal(
-                    &SetOperatorSelection {
-                        mode: OperatorSelectionMode::Automatic,
-                        format: Some(2),
-                    },
-                    false,
-                )
-                .ok(); // Ignore result
-                return Ok(());
-
-            // If (EPS + CSD) is denied registration
-            } else if self.status.eps.get_status() == registration::Status::Denied
-                && self.status.csd.get_status() == registration::Status::Denied
-            {
-                debug!(
-                    "Sticky denied state for {}, RF reset",
-                    self.status.eps.duration(now)
-                );
-                self.status.csd.reset();
-                self.status.psd.reset();
-                self.status.eps.reset();
-                self.status.registration_interventions += 1;
-                self.send_internal(
-                    &SetModuleFunctionality {
-                        fun: Functionality::Minimum,
-                        // SARA-R5 This parameter can be used only when <fun> is 1, 4 or 19
-                        #[cfg(feature = "sara-r5")]
-                        rst: None,
-                        #[cfg(not(feature = "sara-r5"))]
-                        rst: Some(ResetMode::DontReset),
-                    },
-                    false,
-                )?;
-                self.send_internal(
-                    &SetModuleFunctionality {
-                        fun: Functionality::Full,
-                        rst: Some(ResetMode::DontReset),
-                    },
-                    false,
-                )?;
-                return Ok(());
-            }
-        }
 
         // If CSD has been sticky for longer than `timeout`,
         // and (CSD + PSD) is denied registration.
@@ -437,13 +379,6 @@ where
                 self.status.psd.reset();
                 self.status.eps.reset();
                 warn!("GPRS attach failed, try PLMN reselection");
-                self.send_internal(
-                    &SetOperatorSelection {
-                        mode: OperatorSelectionMode::Automatic,
-                        format: Some(2),
-                    },
-                    true,
-                )?;
             }
         }
 
