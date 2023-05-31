@@ -445,14 +445,6 @@ where
             false,
         )?;
 
-        self.network.send_internal(
-            &SetModuleFunctionality {
-                fun: Functionality::Full,
-                rst: Some(ResetMode::DontReset),
-            },
-            true,
-        )?;
-
         // self.network.send_internal(
         //     &SetRadioAccessTechnology {
         //         selected_act: RadioAccessTechnologySelected::GsmUmtsLte(RatPreferred::Lte, RatPreferred::Utran),
