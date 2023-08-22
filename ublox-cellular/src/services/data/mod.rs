@@ -49,8 +49,6 @@ pub const INGRESS_CHUNK_SIZE: usize = 256;
 pub const EGRESS_CHUNK_SIZE: usize = 1024;
 
 pub const PROFILE_ID: ProfileId = ProfileId(1);
-
-#[cfg(not(feature = "upsd-context-activation"))]
 pub const CONTEXT_ID: ContextId = ContextId(1);
 
 impl<C, CLK, RST, DTR, PWR, VINT, const TIMER_HZ: u32, const N: usize, const L: usize>
@@ -279,12 +277,14 @@ where
         apn_info: &APNInfo,
     ) -> nb::Result<(), Error> {
         // Check if the PSD profile is activated (param_tag = 1)
+
+        use crate::command::psn::{types::{PacketSwitchedParam, ProtocolType, PacketSwitchedAction}, GetPacketSwitchedNetworkData, responses::PacketSwitchedNetworkData, SetPacketSwitchedConfig, SetPacketSwitchedAction};
         let PacketSwitchedNetworkData { param_tag, .. } = self
             .network
             .send_internal(
                 &GetPacketSwitchedNetworkData {
                     profile_id,
-                    param: PacketSwitchedNetworkDataParam::PsdProfileStatus,
+                    param: psn::types::PacketSwitchedNetworkDataParam::PsdProfileStatus,
                 },
                 true,
             )

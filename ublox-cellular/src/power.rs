@@ -80,10 +80,46 @@ where
             sim_reset
         );
 
-        let fun = if sim_reset {
-            Functionality::SilentResetWithSimReset
-        } else {
-            Functionality::SilentReset
+        let fun = {
+            #[cfg(any(
+                feature = "toby-l2",
+                feature = "mpci-l2",
+                feature = "lisa-u1",
+                feature = "lisa-u2",
+                feature = "sara-u2",
+                feature = "toby-r2",
+                feature = "lara-r2",
+                feature = "lara-r6",
+                feature = "toby-l4",
+                feature = "leon-g1",
+                feature = "sara-g3",
+                feature = "sara-g4"
+            ))]
+            if sim_reset {
+                Functionality::SilentResetWithSimReset
+            } else {
+                Functionality::SilentReset
+            }
+            #[cfg(not(any(
+                feature = "toby-l2",
+                feature = "mpci-l2",
+                feature = "lisa-u1",
+                feature = "lisa-u2",
+                feature = "sara-u2",
+                feature = "toby-r2",
+                feature = "lara-r2",
+                feature = "lara-r6",
+                feature = "toby-l4",
+                feature = "leon-g1",
+                feature = "sara-g3",
+                feature = "sara-g4"
+            )))]
+            {
+                if sim_reset {
+                    warn!("Sim reset is not available on this device!");
+                }
+                Functionality::SilentResetWithSimReset
+            }
         };
 
         self.network.send_internal(

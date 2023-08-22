@@ -17,7 +17,8 @@ pub enum Functionality {
         feature = "toby-l4",
         feature = "leon-g1",
         feature = "sara-g3",
-        feature = "sara-g4"
+        feature = "sara-g4",
+        feature = "sara-r5"
     ))]
     Minimum = 0,
 
@@ -35,7 +36,8 @@ pub enum Functionality {
         feature = "toby-l4",
         feature = "leon-g1",
         feature = "sara-g3",
-        feature = "sara-g4"
+        feature = "sara-g4",
+        feature = "sara-r5"
     ))]
     Full = 1,
 
@@ -51,7 +53,8 @@ pub enum Functionality {
         feature = "toby-r2",
         feature = "lara-r2",
         feature = "lara-r6",
-        feature = "toby-l4"
+        feature = "toby-l4",
+        feature = "sara-r5"
     ))]
     AirplaneMode = 4,
 
@@ -84,7 +87,8 @@ pub enum Functionality {
         feature = "toby-l4",
         feature = "leon-g1",
         feature = "sara-g3",
-        feature = "sara-g4"
+        feature = "sara-g4",
+        feature = "sara-r5"
     ))]
     DisableSimToolkit = 7,
     #[cfg(any(
@@ -96,7 +100,8 @@ pub enum Functionality {
         feature = "toby-l4",
         feature = "leon-g1",
         feature = "sara-g3",
-        feature = "sara-g4"
+        feature = "sara-g4",
+        feature = "sara-r5"
     ))]
     DisableSimToolkit_ = 8,
 
@@ -141,7 +146,8 @@ pub enum Functionality {
         feature = "toby-l4",
         feature = "leon-g1",
         feature = "sara-g3",
-        feature = "sara-g4"
+        feature = "sara-g4",
+        feature = "sara-r5"
     ))]
     SilentResetWithSimReset = 16,
 
