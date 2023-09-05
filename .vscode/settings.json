@@ -9,7 +9,10 @@
         "x86_64-unknown-linux-gnu"
     ],
     "rust-analyzer.cargo.features": [
-        "lara-r6",
+        "defmt-impl",
+        "sara-r5",
+        "socket-udp",
+        "socket-tcp"
     ],
     "rust-analyzer.cargo.target": "thumbv7em-none-eabihf",
     "rust-analyzer.diagnostics.disabled": [
