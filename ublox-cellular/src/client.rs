@@ -448,6 +448,7 @@ where
             self.network.at_tx.reset()?;
             if self.power_on().is_err() {
                 self.hard_reset()?;
+                self.power_on()?;
             }
 
             self.power_state = PowerState::On;
@@ -612,6 +613,7 @@ where
             // as well as consecutive AT timeouts and do a hard reset.
             Err(crate::network::Error::Generic(GenericError::Timeout)) => {
                 self.hard_reset()?;
+                self.power_on()?;
                 Err(Error::Generic(GenericError::Timeout))
             }
             result => result.map_err(Error::from),

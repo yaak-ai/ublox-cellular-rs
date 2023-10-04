@@ -67,6 +67,7 @@ where
 
         if self.soft_reset(true).is_err() {
             self.hard_reset()?;
+            self.power_on()?;
         }
 
         Ok(())
@@ -133,8 +134,6 @@ where
 
         self.power_state = PowerState::Off;
 
-        self.power_on()?;
-
         Ok(())
     }
 
@@ -147,38 +146,33 @@ where
 
         if self.power_state()? != PowerState::On {
             trace!("Powering modem on.");
-            match self.config.pwr_pin {
+            if let Some(ref mut pwr) = self.config.pwr_pin {
                 // Apply Low pulse on PWR_ON for 50 microseconds to power on
-                Some(ref mut pwr) => {
-                    pwr.set_low().ok();
-                    self.network
-                        .status
-                        .timer
-                        .start(50.micros())
-                        .map_err(from_clock)?;
-                    nb::block!(self.network.status.timer.wait()).map_err(from_clock)?;
+                pwr.set_low().ok();
+                self.network
+                    .status
+                    .timer
+                    .start(50.micros())
+                    .map_err(from_clock)?;
+                nb::block!(self.network.status.timer.wait()).map_err(from_clock)?;
 
-                    pwr.set_high().ok();
-                    self.network
-                        .status
-                        .timer
-                        .start(1.secs())
-                        .map_err(from_clock)?;
-                    nb::block!(self.network.status.timer.wait()).map_err(from_clock)?;
+                pwr.set_high().ok();
+                self.network
+                    .status
+                    .timer
+                    .start(1.secs())
+                    .map_err(from_clock)?;
+                nb::block!(self.network.status.timer.wait()).map_err(from_clock)?;
 
-                    if let Err(e) = self.wait_power_state(PowerState::On, 25.secs()) {
-                        error!("Failed to power on modem");
-                        return Err(e);
-                    } else {
-                        trace!("Modem powered on");
-                    }
+                if let Err(e) = self.wait_power_state(PowerState::On, 25.secs()) {
+                    error!("Failed to power on modem");
+                    return Err(e);
+                } else {
+                    trace!("Modem powered on");
                 }
-                _ => {
-                    // Software restart
-                    if self.soft_reset(false).is_err() {
-                        self.hard_reset()?;
-                    }
-                }
+            } else {
+                error!("Cannot power on modem, pin disabled");
+                return Err(Error::Generic(GenericError::Timeout));
             }
         } else {
             debug!("module is already on");
