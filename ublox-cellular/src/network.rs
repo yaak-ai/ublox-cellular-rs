@@ -25,7 +25,7 @@ use hash32_derive::Hash32;
 use serde::{Deserialize, Serialize};
 
 const REGISTRATION_CHECK_INTERVAL: SecsDurationU32 = SecsDurationU32::secs(15);
-const REGISTRATION_TIMEOUT: MinutesDurationU32 = MinutesDurationU32::minutes(3);
+const REGISTRATION_TIMEOUT: MinutesDurationU32 = MinutesDurationU32::minutes(5);
 const CHECK_IMSI_TIMEOUT: MinutesDurationU32 = MinutesDurationU32::minutes(1);
 
 #[derive(Debug, PartialEq)]
